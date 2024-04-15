@@ -1,8 +1,11 @@
 cmake_minimum_required(VERSION 3.13)
 
+
 include(pico_sdk_import.cmake)
 
 project(project_name)
+
+set(PICO_BOARD pico_w)
 
 pico_sdk_init()
 
@@ -11,8 +14,9 @@ add_executable(template
 )
 
 # Add pico_stdlib library, add more if used
-target_link_libraries(template pico_stdlib)
-
+target_link_libraries(template
+pico_cyw43_arch_none
+pico_stdlib)
 # enable usb output, disable uart output
 pico_enable_stdio_usb(template 1)
 pico_enable_stdio_uart(template 0)
