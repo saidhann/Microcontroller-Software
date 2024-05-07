@@ -2,7 +2,7 @@
 #include "pico/cyw43_arch.h"
 #include "hardware/adc.h"
 
-// SSI tags
+
 const char * ssi_tags[] = {"volt","temp","led"};
 
 uint16_t ssi_handler(int iIndex, char *pcInsert, int iInsertLen){

@@ -10,6 +10,9 @@
 const char WIFI_SSID[] = "UPC1157195";
 const char WIFI_PASSWORD[] = "zfsvzf2sJ4dycBjj";
 
+//const char WIFI_SSID[] = "POCO F5";
+//const char WIFI_PASSWORD[] = "lolxdlolxdlolxd";
+
 int main() {
 
     //inicialization
@@ -24,7 +27,6 @@ int main() {
     }
 
     printf("Connecion success\n");
-
     httpd_init();
     printf("Http server initialised\n");
 
@@ -37,7 +39,13 @@ int main() {
     //loop
 
     while(true) {
-
+        
+        while (ledBlink) {
+        cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, 1);
+        sleep_ms(250);
+        cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, 0);
+        sleep_ms(250);
+    }
     }
     /*
     stdio_init_all();
@@ -45,11 +53,6 @@ int main() {
         printf("Wi-Fi init failed");
         return -1;
     }
-    while (true) {
-        cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, 1);
-        sleep_ms(250);
-        cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, 0);
-        sleep_ms(250);
-    }
+    
     */
 }

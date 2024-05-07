@@ -1,6 +1,10 @@
 #include "lwip/apps/httpd.h"
 #include "pico/cyw43_arch.h"
 
+bool ledBlink = false;
+
+
+
 // CGI handler for /led.cgi request
 const char * cgi_led_handler(int iIndex, int iNumParams, char *pcParam[], char *pcValue[]){
     // Check if request for led has been made /led.cgi?led=x
@@ -10,6 +14,9 @@ const char * cgi_led_handler(int iIndex, int iNumParams, char *pcParam[], char *
             cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN,0);
         if(strcmp(pcValue[0],"1")==0)
             cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN,1);
+        if(strcmp(pcValue[0],"3")==0) {
+            ledBlink = !ledBlink;
+        }
     }
 
     // Send the index page to the user
