@@ -1,36 +1,54 @@
 #include "lwip/apps/httpd.h"
 #include "pico/cyw43_arch.h"
 #include "hardware/adc.h"
+#include "temperature.h"
 
 
-const char * ssi_tags[] = {"volt","temp","led"};
+const char * ssi_tags[] = {"myTemp","temp1","temp2","temp3","temp4","light1","light2","light3","light4"};
 
 uint16_t ssi_handler(int iIndex, char *pcInsert, int iInsertLen){
     size_t printed;
 
     switch(iIndex){
-        case 0: //volt
-        {
-            const float voltage = adc_read() * 3.3f / (1 << 12);
-            printed = snprintf(pcInsert,iInsertLen, "%f",voltage);
-        }
-        break;
-        case 1: //temp
+        case 0: //myTemp
         {
             const float voltage = adc_read() * 3.3f / (1 << 12);
             const float tempC = 27.0f - (voltage - 0.706f) / 0.001721f;
             printed = snprintf(pcInsert,iInsertLen, "%f",tempC);
         }
         break;
-        case 2: //led
+        case 1: //temp1
         {
-            bool led_status = cyw43_arch_gpio_get(CYW43_WL_GPIO_LED_PIN);
-            if(led_status == true) {
-                printed = snprintf(pcInsert,iInsertLen, "ON");
-            }
-            else {
-                printed = snprintf(pcInsert,iInsertLen, "OFF");
-            }
+                printed = snprintf(pcInsert,iInsertLen,"%f",temperatureVector[0]);
+        }
+        break;
+        case 2: //temp2
+        {
+                printed = snprintf(pcInsert,iInsertLen,"%f",temperatureVector[1]);
+        }
+        case 3: //temp3
+        {
+                printed = snprintf(pcInsert,iInsertLen,"%f",temperatureVector[2]);
+        }
+        case 4: //temp4
+        {
+                printed = snprintf(pcInsert,iInsertLen,"%f",temperatureVector[3]);
+        }
+        case 5: //light1
+        {
+                printed = snprintf(pcInsert,iInsertLen,"%f",lightVector[0]);
+        }
+        case 6: //light2
+        {
+                printed = snprintf(pcInsert,iInsertLen,"%f",lightVector[1]);
+        }
+        case 7: //light3
+        {
+                printed = snprintf(pcInsert,iInsertLen,"%f",lightVector[2]);
+        }
+        case 8: //light4
+        {
+                printed = snprintf(pcInsert,iInsertLen,"%f",lightVector[3]);
         }
         break;
         default:

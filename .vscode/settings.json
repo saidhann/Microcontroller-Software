@@ -27,6 +27,9 @@
     "files.associations": {
         "lwipopts.h": "c",
         "cyw43_arch.h": "c",
-        "httpd.h": "c"
+        "httpd.h": "c",
+        "stdlib.h": "c",
+        "httpd_structs.h": "c",
+        "debug.h": "c"
     }
 }

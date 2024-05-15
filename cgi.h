@@ -1,7 +1,7 @@
 #include "lwip/apps/httpd.h"
 #include "pico/cyw43_arch.h"
+#include "temperature.h"
 
-bool ledBlink = false;
 
 
 
@@ -23,13 +23,41 @@ const char * cgi_led_handler(int iIndex, int iNumParams, char *pcParam[], char *
     return "/index.shtml";
 }
 
+const char * cgi_temperature_handler(int iIndex, int iNumParams, char *pcParam[], char *pcValue[]){
+    return "/temperature.shtml";
+}
+
+const char * cgi_light_handler(int iIndex, int iNumParams, char *pcParam[], char *pcValue[]){
+    return "/light.shtml";
+}
+
+const char * cgi_set_light_handler(int iIndex, int iNumParams, char *pcParam[], char *pcValue[]){
+    return "/index.shtml";
+}
+
+const char * cgi_set_temperature_handler(int iIndex, int iNumParams, char *pcParam[], char *pcValue[]){
+    return "index.shtml";
+}
+
 static const tCGI cgi_handlers[] = {
     {
         //HTML request for /led.cgi triggers cgi_led_handler
         "/led.cgi", cgi_led_handler
+    },
+    {
+        "/temperature.cgi", cgi_temperature_handler
+    },
+    {
+        "/sendtemperature.cgi",cgi_set_temperature_handler
+    },
+    {
+        "/light.cgi",cgi_light_handler
+    },
+    {
+        "/sendlight.cgi",cgi_set_light_handler
     }
 };
 
 void cgi_init(void) {
-    http_set_cgi_handlers(cgi_handlers,1);
+    http_set_cgi_handlers(cgi_handlers,5);
 }
