@@ -1,7 +1,7 @@
 #include "lwip/apps/httpd.h"
 #include "pico/cyw43_arch.h"
 #include "hardware/adc.h"
-#include "temperature.h"
+#include "globaldata.h"
 
 
 const char * ssi_tags[] = {"myTemp","temp1","temp2","temp3","temp4","light1","light2","light3","light4"};

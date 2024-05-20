@@ -1,11 +1,12 @@
 #include "lwip/opt.h"
-#include "temperature.h"
+#include "globaldata.h"
 #include "lwip/apps/httpd.h"
 #include "lwip/def.h"
 #include "lwip/mem.h"
 
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 /** define LWIP_HTTPD_EXAMPLE_GENERATEDFILES to 1 to enable this file system */
 #ifndef LWIP_HTTPD_EXAMPLE_SIMPLEPOST
@@ -56,46 +57,27 @@ err_t
 httpd_post_receive_data(void *connection, struct pbuf *p)
 {
   if (current_connection == connection) {
-    u16_t token_user = pbuf_memfind(p, "user=", 5, 0);
-    u16_t token_pass = pbuf_memfind(p, "pass=", 5, 0);
-    if ((token_user != 0xFFFF) && (token_pass != 0xFFFF)) {
-      u16_t value_user = token_user + 5;
-      u16_t value_pass = token_pass + 5;
-      u16_t len_user = 0;
-      u16_t len_pass = 0;
-      u16_t tmp;
-      /* find user len */
-      tmp = pbuf_memfind(p, "&", 1, value_user);
-      if (tmp != 0xFFFF) {
-        len_user = tmp - value_user;
-      } else {
-        len_user = p->tot_len - value_user;
-      }
-      /* find pass len */
-      tmp = pbuf_memfind(p, "&", 1, value_pass);
-      if (tmp != 0xFFFF) {
-        len_pass = tmp - value_pass;
-      } else {
-        len_pass = p->tot_len - value_pass;
-      }
-      if ((len_user > 0) && (len_user < USER_PASS_BUFSIZE) &&
-          (len_pass > 0) && (len_pass < USER_PASS_BUFSIZE)) {
-        /* provide contiguous storage if p is a chained pbuf */
-        char buf_user[USER_PASS_BUFSIZE];
-        char buf_pass[USER_PASS_BUFSIZE];
-        char *user = (char *)pbuf_get_contiguous(p, buf_user, sizeof(buf_user), len_user, value_user);
-        char *pass = (char *)pbuf_get_contiguous(p, buf_pass, sizeof(buf_pass), len_pass, value_pass);
-        if (user && pass) {
-          user[len_user] = 0;
-          pass[len_pass] = 0;
-          if (!strcmp(user, "lwip") && !strcmp(pass, "post")) {
-            /* user and password are correct, create a "session" */
-            valid_connection = connection;
-            memcpy(last_user, user, sizeof(last_user));
-          }
-        }
-      }
-    }
+    u16_t token_client_id = pbuf_memfind(p, "id=", 3, 0);
+    u16_t token_temperature = pbuf_memfind(p, "temp=", 5, 0);
+    u16_t token_light = pbuf_memfind(p, "light=", 6, 0);
+
+    int id_length = 1;
+    int temp_length = 9;
+    int light_length = 9;
+
+    char id_buf[id_length];
+    char temp_buf[temp_length];
+    char light_buf[light_length];
+    pbuf_get_contiguous(p,id_buf,sizeof(id_buf),id_length,token_client_id+3);
+    pbuf_get_contiguous(p,temp_buf,sizeof(temp_buf),temp_length,token_temperature+5);
+    pbuf_get_contiguous(p,light_buf,sizeof(light_buf),light_length,token_light+3);
+
+    temperatureVector[(int)id_buf] = atof(temp_buf);
+    lightVector[(int)id_buf] = atof(light_buf);
+
+    valid_connection = connection;
+    
+    
     /* not returning ERR_OK aborts the connection, so return ERR_OK unless the
        conenction is unknown */
     return ERR_OK;

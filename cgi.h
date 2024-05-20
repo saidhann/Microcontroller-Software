@@ -1,6 +1,6 @@
 #include "lwip/apps/httpd.h"
 #include "pico/cyw43_arch.h"
-#include "temperature.h"
+#include "globaldata.h"
 
 
 

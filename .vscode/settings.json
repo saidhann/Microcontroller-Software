@@ -30,6 +30,8 @@
         "httpd.h": "c",
         "stdlib.h": "c",
         "httpd_structs.h": "c",
-        "debug.h": "c"
+        "debug.h": "c",
+        "postrequest.h": "c",
+        "stdio.h": "c"
     }
 }

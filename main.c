@@ -4,7 +4,7 @@
 #include "lwipopts.h"
 #include "ssi.h"
 #include "cgi.h"
-#include "post.h"
+#include "postrequest.h"
 
 // Wifi SSID and password
 
