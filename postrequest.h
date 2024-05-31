@@ -26,11 +26,21 @@ static void *current_connection;
 static void *valid_connection;
 static char last_user[USER_PASS_BUFSIZE];
 
+static char* strchrn( char* string, char character, size_t maxLength) {
+    for (size_t i = 0; i< maxLength; ++i) {
+        if (string[i] == character) {
+            return &string[i];
+        }
+    }
+    return NULL;
+}
+
 err_t
 httpd_post_begin(void *connection, const char *uri, const char *http_request,
                  u16_t http_request_len, int content_len, char *response_uri,
                  u16_t response_uri_len, u8_t *post_auto_wnd)
 {
+  printf("runing httpd_post_begin\n");
   LWIP_UNUSED_ARG(connection);
   LWIP_UNUSED_ARG(http_request);
   LWIP_UNUSED_ARG(http_request_len);
@@ -56,25 +66,60 @@ httpd_post_begin(void *connection, const char *uri, const char *http_request,
 err_t
 httpd_post_receive_data(void *connection, struct pbuf *p)
 {
-  if (current_connection == connection) {
-    u16_t token_client_id = pbuf_memfind(p, "id=", 3, 0);
-    u16_t token_temperature = pbuf_memfind(p, "temp=", 5, 0);
-    u16_t token_light = pbuf_memfind(p, "light=", 6, 0);
+  
+  printf("runing httpd_post_recive\n");
 
-    int id_length = 1;
-    int temp_length = 9;
-    int light_length = 9;
+  //int len = pbuf_copy_partial(p,myData,p->tot_len,0);
+  //printf("Total len: %d, String:", len);
+  //for (int i = 0;i < len; ++i) {
+  //  printf(" 0x%2x", myData[i]);
+  //}
+printf("\n");
+  if (current_connection == connection) {    
 
-    char id_buf[id_length];
-    char temp_buf[temp_length];
-    char light_buf[light_length];
-    pbuf_get_contiguous(p,id_buf,sizeof(id_buf),id_length,token_client_id+3);
-    pbuf_get_contiguous(p,temp_buf,sizeof(temp_buf),temp_length,token_temperature+5);
-    pbuf_get_contiguous(p,light_buf,sizeof(light_buf),light_length,token_light+3);
+    char inputBuffer[1024];
+    int bufferSize = pbuf_copy_partial(p, inputBuffer, p->tot_len, 0);
 
-    temperatureVector[(int)id_buf] = atof(temp_buf);
-    lightVector[(int)id_buf] = atof(light_buf);
+    inputBuffer[bufferSize] = 0;
 
+    if (bufferSize < 1) {
+        return ERR_VAL;
+    }
+
+
+    if (inputBuffer[0] == 'i') {
+      char* idStr = inputBuffer + 2;
+      char* tempStr = strchrn(idStr+1, ' ', bufferSize);
+      char* lightStr = strchrn(tempStr+1, ' ', bufferSize);
+      if (!tempStr || !lightStr) {
+        return ERR_VAL;
+    }
+    
+    
+
+    *(tempStr++) = *(lightStr++) = '\0';
+
+    //printf(idStr);
+    //printf("\n");
+    //printf(tempStr);
+    //printf("\n");
+    //printf(lightStr);
+    //printf("\n");
+
+    int id = atoi(idStr);
+    float temp = atof(tempStr);
+    float light = atof(lightStr);
+
+
+    temperatureVector[id] = temp;
+    lightVector[id] = light;
+    }
+    else if(inputBuffer[0] == 's')
+    {
+      
+      relayState = (inputBuffer[2]=='1');
+    }
+    
     valid_connection = connection;
     
     
@@ -88,6 +133,7 @@ httpd_post_receive_data(void *connection, struct pbuf *p)
 void
 httpd_post_finished(void *connection, char *response_uri, u16_t response_uri_len)
 {
+  printf("runing httpd_post_finished\n");
   /* default page is "login failed" */
   snprintf(response_uri, response_uri_len, "/index.html");
   if (current_connection == connection) {

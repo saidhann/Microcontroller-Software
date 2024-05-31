@@ -4,7 +4,7 @@
 #include "globaldata.h"
 
 
-const char * ssi_tags[] = {"myTemp","temp1","temp2","temp3","temp4","light1","light2","light3","light4"};
+const char * ssi_tags[] = {"myTemp","temp1","temp2","temp3","temp4","light1","light2","light3","light4","relay"};
 
 uint16_t ssi_handler(int iIndex, char *pcInsert, int iInsertLen){
     size_t printed;
@@ -26,29 +26,42 @@ uint16_t ssi_handler(int iIndex, char *pcInsert, int iInsertLen){
         {
                 printed = snprintf(pcInsert,iInsertLen,"%f",temperatureVector[1]);
         }
+        break;
         case 3: //temp3
         {
                 printed = snprintf(pcInsert,iInsertLen,"%f",temperatureVector[2]);
         }
+        break;
         case 4: //temp4
         {
                 printed = snprintf(pcInsert,iInsertLen,"%f",temperatureVector[3]);
         }
+        break;
         case 5: //light1
         {
                 printed = snprintf(pcInsert,iInsertLen,"%f",lightVector[0]);
         }
+        break;
         case 6: //light2
         {
                 printed = snprintf(pcInsert,iInsertLen,"%f",lightVector[1]);
         }
+        break;
         case 7: //light3
         {
                 printed = snprintf(pcInsert,iInsertLen,"%f",lightVector[2]);
         }
+        break;
         case 8: //light4
         {
                 printed = snprintf(pcInsert,iInsertLen,"%f",lightVector[3]);
+        }
+        break;
+        case 9: //relay state
+        {
+                if(relayState) printed = snprintf(pcInsert,iInsertLen,"on");
+                else printed = snprintf(pcInsert,iInsertLen,"off");
+
         }
         break;
         default:

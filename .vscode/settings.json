@@ -23,7 +23,7 @@
     },
     "cmake.generator": "Ninja",
     "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
-    "C_Cpp.errorSquiggles": "enabled",
+    "C_Cpp.errorSquiggles": "disabled",
     "files.associations": {
         "lwipopts.h": "c",
         "cyw43_arch.h": "c",
@@ -32,6 +32,11 @@
         "httpd_structs.h": "c",
         "debug.h": "c",
         "postrequest.h": "c",
-        "stdio.h": "c"
+        "stdio.h": "c",
+        "mem.h": "c",
+        "def.h": "c",
+        "string.h": "c",
+        "globaldata.h": "c",
+        "opt.h": "c"
     }
 }
