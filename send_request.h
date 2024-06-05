@@ -4,9 +4,11 @@
 #include "pico/cyw43_arch.h"
 #include "lwip/tcp.h"
 
+bool relayState = false;
 float currentTemperature;
-float currentLight;
-int id = 2;
+float currentLight=44.00;
+int id = 1;
+char inputBuffer[1024];
 
 #define SERVER_IP "192.168.0.174"  // Replace with your server IP
 #define SERVER_PORT 80            // Standard HTTP port
@@ -14,6 +16,7 @@ int id = 2;
 static err_t tcp_client_connected(void *arg, struct tcp_pcb *tpcb, err_t err);
 static void tcp_client_err(void *arg, err_t err);
 static err_t tcp_client_sent(void *arg, struct tcp_pcb *tpcb, u16_t len);
+static err_t tcp_client_recv(void *arg, struct tcp_pcb *tpcb, struct pbuf *p, err_t err);
 
 static err_t tcp_client_connected(void *arg, struct tcp_pcb *tpcb, err_t err) {
     if (err != ERR_OK) {
@@ -28,7 +31,7 @@ static err_t tcp_client_connected(void *arg, struct tcp_pcb *tpcb, err_t err) {
     snprintf(post_message,sizeof(post_message),"i %d %f %f",id,currentTemperature,currentLight);
 
     snprintf(post_request, sizeof(post_request),
-        "POST /sendtemperature.cgi HTTP/1.1\r\n"
+        "POST /send_info.cgi HTTP/1.1\r\n"
         "Host: 192.168.0.174\r\n"
         "Content-Type: application/x-www-form-urlencoded\r\n"
         "Content-Length: %d\r\n"
@@ -37,6 +40,8 @@ static err_t tcp_client_connected(void *arg, struct tcp_pcb *tpcb, err_t err) {
         strlen(post_message), post_message);
 
     tcp_write(tpcb, post_request, strlen(post_request), TCP_WRITE_FLAG_COPY);
+
+    tcp_recv(tpcb, tcp_client_recv);
 
     return ERR_OK;
 }
@@ -47,6 +52,20 @@ static void tcp_client_err(void *arg, err_t err) {
 
 static err_t tcp_client_sent(void *arg, struct tcp_pcb *tpcb, u16_t len) {
     printf("Data sent\n");
+    return ERR_OK;
+}
+
+static err_t tcp_client_recv(void *arg, struct tcp_pcb *tpcb, struct pbuf *p, err_t err) {
+    if (!p) {
+        printf("Connection closed by server\n");
+        tcp_close(tpcb);
+        return ERR_OK;
+    }
+    int bufferSize = pbuf_copy_partial(p, inputBuffer, p->tot_len, 99);
+    //printf("Received %d bytes: %.*s\n", p->tot_len, p->tot_len, (char *)p->payload);
+    tcp_recved(tpcb, p->tot_len);
+    pbuf_free(p);
+
     return ERR_OK;
 }
 
