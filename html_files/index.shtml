@@ -8,14 +8,14 @@
         <h1>Pico W Webserver</h1>
         <br>
         <h2>Temperatures</h2>
-        <p>temperature 1: <!--#temp1--> V</p>
-        <p>temperature 2: <!--#temp2--> V</p>
-        <p>temperature 3: <!--#temp3--> V</p>
-        <p>temperature 4: <!--#temp4--> V</p>
-        <p>light 1: <!--#light1--> V</p>
-        <p>light 2: <!--#light2--> V</p>
-        <p>light 3: <!--#light3--> V</p>
-        <p>light 4: <!--#light4--> V</p>
+        <p>temperature 1: <!--#temp1--> C</p>
+        <p>temperature 2: <!--#temp2--> C</p>
+        <p>temperature 3: <!--#temp3--> C</p>
+        <p>temperature 4: <!--#temp4--> C</p>
+        <p>light 1: <!--#light1--> %</p>
+        <p>light 2: <!--#light2--> %</p>
+        <p>light 3: <!--#light3--> %</p>
+        <p>light 4: <!--#light4--> %</p>
         <br>
         <p>relay state:| <!--#relay--> |</p>
         <br>
