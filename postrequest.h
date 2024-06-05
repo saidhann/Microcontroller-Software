@@ -46,12 +46,12 @@ httpd_post_begin(void *connection, const char *uri, const char *http_request,
   LWIP_UNUSED_ARG(http_request_len);
   LWIP_UNUSED_ARG(content_len);
   LWIP_UNUSED_ARG(post_auto_wnd);
-  if (!memcmp(uri, "/sendtemperature.cgi", 11)) {
+  if (!memcmp(uri, "/send_info.cgi", 11)) {
     if (current_connection != connection) {
       current_connection = connection;
       valid_connection = NULL;
       /* default page is "login failed" */
-      snprintf(response_uri, response_uri_len, "/index.html");
+      snprintf(response_uri, response_uri_len, "/info.shtml");
       /* e.g. for large uploads to slow flash over a fast connection, you should
          manually update the rx window. That way, a sender can only send a full
          tcp window at a time. If this is required, set 'post_aut_wnd' to 0.
@@ -96,7 +96,7 @@ printf("\n");
     }
     
     
-
+    
     *(tempStr++) = *(lightStr++) = '\0';
 
     //printf(idStr);
@@ -135,11 +135,11 @@ httpd_post_finished(void *connection, char *response_uri, u16_t response_uri_len
 {
   printf("runing httpd_post_finished\n");
   /* default page is "login failed" */
-  snprintf(response_uri, response_uri_len, "/index.html");
+  snprintf(response_uri, response_uri_len, "/info.shtml");
   if (current_connection == connection) {
     if (valid_connection == connection) {
       /* login succeeded */
-      snprintf(response_uri, response_uri_len, "/index.html");
+      snprintf(response_uri, response_uri_len, "/info.shtml");
     }
     current_connection = NULL;
     valid_connection = NULL;
