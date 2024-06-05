@@ -4,7 +4,7 @@
 #include "globaldata.h"
 
 
-const char * ssi_tags[] = {"myTemp","temp1","temp2","temp3","temp4","light1","light2","light3","light4","relay"};
+const char * ssi_tags[] = {"myTemp","temp1","temp2","temp3","temp4","light1","light2","light3","light4","relay","mode"};
 
 uint16_t ssi_handler(int iIndex, char *pcInsert, int iInsertLen){
     size_t printed;
@@ -62,6 +62,12 @@ uint16_t ssi_handler(int iIndex, char *pcInsert, int iInsertLen){
                 if(relayState) printed = snprintf(pcInsert,iInsertLen,"on");
                 else printed = snprintf(pcInsert,iInsertLen,"off");
 
+        }
+        break;
+        case 10: //relay mode
+        {
+                if(relayMode) printed = snprintf(pcInsert,iInsertLen,"auto");
+                else printed = snprintf(pcInsert,iInsertLen,"manual");
         }
         break;
         default:

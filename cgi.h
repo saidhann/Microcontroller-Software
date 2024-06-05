@@ -23,6 +23,17 @@ const char * cgi_led_handler(int iIndex, int iNumParams, char *pcParam[], char *
     return "/index.shtml";
 }
 
+const char * cgi_relay_handler(int iIndex, int iNumParams, char *pcParam[], char *pcValue[]){
+    if(strcmp(pcParam[0],"relay")==0) {
+        //check prameter value
+        if(strcmp(pcValue[0],"0")==0)
+            relayState=!relayState;
+        if(strcmp(pcValue[0],"1")==0)
+            relayMode = !relayMode;
+    }
+    return "/index.shtml";
+}
+
 const char * cgi_info_handler(int iIndex, int iNumParams, char *pcParam[], char *pcValue[]){
     return "/info.shtml";
 }
@@ -41,9 +52,12 @@ static const tCGI cgi_handlers[] = {
     },
     {
         "/send_info.cgi",cgi_send_info_handler
+    },
+    {
+        "/relay.cgi", cgi_relay_handler
     }
 };
 
 void cgi_init(void) {
-    http_set_cgi_handlers(cgi_handlers,3);
+    http_set_cgi_handlers(cgi_handlers,4);
 }

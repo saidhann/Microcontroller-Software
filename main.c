@@ -8,6 +8,14 @@
 
 // Wifi SSID and password
 
+float adc_to_temperature(uint16_t raw) {
+    const float conversion_factor = 3.3f / (1 << 12);
+    float voltage = raw * conversion_factor;
+    // The voltage value should be calibrated for accurate temperature reading
+    float temperature = 27.0 - (voltage - 0.706) / 0.001721;
+    return temperature;
+}
+
 const char WIFI_SSID[] = "UPC1157195";
 const char WIFI_PASSWORD[] = "zfsvzf2sJ4dycBjj";
 
@@ -37,10 +45,22 @@ int main() {
     cgi_init();
     printf("CGI initialised\n");
 
+    adc_init();
+    adc_set_temp_sensor_enabled(true);
+    adc_select_input(4);
+
     //loop
 
     while(true) {
         
+        if(relayMode==automatic) {
+            if((temperatureVector[0]+temperatureVector[1]+temperatureVector[2]+temperatureVector[3])/4<confortableTemperature) relayState = 1;
+            else relayState = 0;
+        }
+        uint16_t raw = adc_read();
+
+        temperatureVector[0] = adc_to_temperature(raw);
+
         while (ledBlink) {
         cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, 1);
         sleep_ms(250);
